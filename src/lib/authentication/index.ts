@@ -1,45 +1,45 @@
-import * as jwt from 'jsonwebtoken'
-import { User } from '../../entities'
-import { UnauthorizedError } from '../../errors'
-import { UserRepository } from '../../repositories'
+import * as jwt from "jsonwebtoken";
+import { User } from "../../entities";
+import { UnauthorizedError } from "../../errors";
+import { UserRepository } from "../../repositories";
 
 export interface AuthUser {
-  id: number
-  email: string
-  role: Role
+  id: number;
+  email: string;
+  role: Role;
 }
 
 export enum Role {
-  user = 'user',
-  admin = 'admin'
+  user = "user",
+  admin = "admin"
 }
 
 export interface Authenticator {
-  validate(token: string): Promise<AuthUser>
-  authenticate(user: User): string
+  validate(token: string): Promise<AuthUser>;
+  authenticate(user: User): string;
 }
 
 export class JWTAuthenticator implements Authenticator {
-  private userRepo: UserRepository
-  private secret: string
+  private userRepo: UserRepository;
+  private secret: string;
 
   constructor(userRepo: UserRepository) {
-    this.userRepo = userRepo
-    this.secret = process.env.SECRET_KEY || 'secret'
+    this.userRepo = userRepo;
+    this.secret = process.env.SECRET_KEY || "secret";
   }
 
   public async validate(token: string): Promise<AuthUser> {
     try {
-      const decode: any = jwt.verify(token, this.secret)
-      const user = await this.userRepo.findByEmail(decode.email)
+      const decode: any = jwt.verify(token, this.secret);
+      const user = await this.userRepo.findByEmail(decode.email);
 
       return {
         id: user.id,
         email: user.email,
         role: user.role as Role
-      }
+      };
     } catch (err) {
-      throw new UnauthorizedError(err)
+      throw new UnauthorizedError(err);
     }
   }
 
@@ -50,6 +50,6 @@ export class JWTAuthenticator implements Authenticator {
       {
         expiresIn: 60 * 60
       }
-    )
+    );
   }
 }
