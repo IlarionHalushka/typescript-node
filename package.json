@@ -7,11 +7,7 @@
     "url": "https://github.com/Talento90/typescript-node.git"
   },
   "author": "Talento90",
-  "keywords": [
-    "typescript",
-    "nodejs",
-    "backend"
-  ],
+  "keywords": ["typescript", "nodejs", "backend"],
   "scripts": {
     "build": "rm -rf dist && tsc",
     "build:watch": "rm -rf dist && tsc -w",
@@ -72,8 +68,15 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && npm test && prettier --write --single-quote --trailing-comma all && git add"
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "prettier --write --single-quote --trailing-comma all",
+      "npm run lint ",
+      "npm test",
+      "git add"
+    ]
   }
 }
-
